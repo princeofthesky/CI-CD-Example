@@ -1,0 +1,49 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: centos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run tests
+        run: go test
+
+  deploy:
+    needs: build
+    runs-on: centos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Golang
+        uses: actions/setup-go@v2
+        with:
+          node-version: 1.21
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Build for production
+        run: go build
+
+      - name: Deploy to staging
+        run: |
+          # Replace this with your deployment command
+          echo "Deploying to staging environment"
